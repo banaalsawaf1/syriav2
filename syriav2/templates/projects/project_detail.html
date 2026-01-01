@@ -1,0 +1,821 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+ 
+ .project-detail-page {
+     min-height: 100vh;
+     background: linear-gradient(135deg, rgba(78, 231, 134, 0.316) 0%, rgba(255, 255, 255, 0.9) 100%);
+     padding-top: 40px;
+     padding-bottom: 60px;
+ }
+ 
+ .project-title-main {
+     color: #2b6b42;
+     text-align: center;
+     font-size: 36px;
+     font-weight: 700;
+     margin-bottom: 30px;
+     padding: 20px;
+     border-bottom: 3px solid #2b6b42;
+     width: 100%;
+     font-family: 'Cairo', sans-serif;
+ }
+ 
+ .gallery-section,
+ .info-section,
+ .map-section,
+ .stats-section {
+     width: 90%;        
+    max-width: 1500px; 
+    margin: 0 auto 40px;
+ }
+ 
+ .container {
+     max-width: 100%;
+     padding: 0 15px;
+ }
+ 
+ 
+ .gallery-section {
+     background: white;
+     border-radius: 20px;
+     padding: 30px;
+     margin-bottom: 40px;
+     box-shadow: 0 10px 30px rgba(43, 107, 66, 0.2);
+ }
+ 
+ .gallery-grid {
+     display: grid;
+     grid-template-columns: repeat(2, 1fr);
+     gap: 20px;
+     margin-bottom: 20px;
+ }
+ 
+ .gallery-item {
+     border-radius: 15px;
+     overflow: hidden;
+     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+     transition: transform 0.3s, box-shadow 0.3s;
+     height: 450px;
+ }
+ 
+ .gallery-item:hover {
+     transform: translateY(-5px);
+     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+ }
+ 
+ .gallery-item img {
+     width: 100%;
+     height: 100%;
+     object-fit: cover;
+ }
+ 
+ .info-section {
+     background: white;
+     border-radius: 20px;
+     padding: 30px;
+     margin-bottom: 40px;
+     box-shadow: 0 10px 30px rgba(43, 107, 66, 0.2);
+ }
+ 
+ .info-grid-simple {
+     display: flex;
+     flex-direction: column;
+     gap: 30px;
+ }
+ 
+ .info-row {
+     display: flex;
+     justify-content: space-between;
+     gap: 20px;
+ }
+ 
+ .info-item-half {
+     flex: 1;
+ }
+ 
+ .info-row-full {
+     width: 100%;
+ }
+ 
+ .info-label {
+     color: #2b6b42;
+     font-weight: 600;
+     font-size: 16px;
+     display: flex;
+     align-items: center;
+     gap: 10px;
+     margin-bottom: 10px;
+ }
+ 
+ .info-value {
+     color: #333;
+     font-size: 18px;
+     padding: 15px;
+     background: rgba(43, 107, 66, 0.05);
+     border-radius: 10px;
+     border-right: 4px solid #2b6b42;
+     min-height: 60px;
+     display: flex;
+     align-items: center;
+ }
+ 
+ .info-value-full {
+     background: rgba(43, 107, 66, 0.05);
+     padding: 20px;
+     border-radius: 10px;
+     line-height: 1.8;
+     margin-top: 10px;
+     border-right: 4px solid #2b6b42;
+     font-size: 21px;
+ }
+ 
+ .map-section {
+     background: white;
+     border-radius: 20px;
+     padding: 30px;
+     margin-bottom: 40px;
+     box-shadow: 0 10px 30px rgba(43, 107, 66, 0.2);
+ }
+ 
+ .map-container {
+     height: 500px; 
+     border-radius: 15px;
+     overflow: hidden;
+     border: 2px solid #2b6b42;
+ }
+ 
+ 
+ .stats-section {
+     background: white;
+     border-radius: 20px;
+     padding: 30px;
+     margin-bottom: 40px;
+     box-shadow: 0 10px 30px rgba(43, 107, 66, 0.2);
+ }
+ 
+ .stats-grid-compact {
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+     gap: 20px;
+     margin-top: 20px;
+ }
+ 
+ .stat-item-compact {
+     background: rgba(43, 107, 66, 0.05);
+     border-radius: 15px;
+     padding: 20px;
+     text-align: center;
+     border: 1px solid #2b6b42;
+     transition: transform 0.3s;
+ }
+ 
+ .stat-item-compact:hover {
+     transform: translateY(-5px);
+     background: rgba(43, 107, 66, 0.1);
+ }
+ 
+ .stat-icon {
+     font-size: 40px;
+     color: #2b6b42;
+     margin-bottom: 15px;
+ }
+ 
+ .stat-value {
+     font-size: 24px;
+     font-weight: 700;
+     color: #2b6b42;
+     margin-bottom: 10px;
+ }
+ 
+ .stat-label {
+     color: #666;
+     font-size: 14px;
+     font-weight: 600;
+ }
+ 
+ 
+ .tables-section {
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+     gap: 30px;
+     margin-bottom: 40px;
+ }
+ 
+ .table-card {
+     background: white;
+     border-radius: 20px;
+     padding: 25px;
+     box-shadow: 0 10px 30px rgba(43, 107, 66, 0.2);
+     border: 2px solid #2b6b42;
+ }
+ 
+ .table-title {
+     color: #2b6b42;
+     text-align: center;
+     margin-bottom: 20px;
+     font-size: 22px;
+     font-weight: 700;
+ }
+ 
+ .empty-table {
+     text-align: center;
+     color: #666;
+     padding: 40px 20px;
+     font-size: 16px;
+ }
+ 
+
+ .buttons-section-final {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-top: 40px;
+     padding: 20px 0;
+     border-top: 1px solid rgba(43, 107, 66, 0.2);
+ }
+ 
+ .center-button {
+     position: absolute;
+     left: 50%;
+     transform: translateX(-50%);
+ }
+ 
+ .right-button {
+     margin-left: auto;
+ }
+ 
+ .detail-btn {
+     background-color: #2b6b42;
+     color: white;
+     border: none;
+     border-radius: 50px;
+     padding: 15px 40px;
+     font-size: 18px;
+     font-weight: 600;
+     box-shadow: 0 6px 20px rgba(43, 107, 66, 0.3);
+     transition: all 0.3s;
+     text-decoration: none;
+     display: inline-flex;
+     align-items: center;
+     gap: 10px;
+     font-family: 'Cairo', sans-serif;
+     cursor: pointer;
+ }
+ 
+ .detail-btn:hover {
+     background-color: #3a8a57;
+     transform: translateY(-3px);
+     box-shadow: 0 10px 25px rgba(43, 107, 66, 0.4);
+     color: white;
+     text-decoration: none;
+ }
+ 
+ .detail-btn.secondary {
+     background-color: #6c757d;
+ }
+ 
+ .detail-btn.secondary:hover {
+     background-color: #5a6268;
+ }
+ 
+ .detail-btn.warning {
+     background-color: #ffc107;
+     color: #212529;
+ }
+ 
+ .detail-btn.warning:hover {
+     background-color: #e0a800;
+     color: #212529;
+ }
+ 
+ .detail-btn.danger {
+     background-color: #dc3545;
+ }
+ 
+ .detail-btn.danger:hover {
+     background-color: #c82333;
+ }
+ 
+ 
+ .chart-container {
+     height: 200px;
+     width: 100%;
+     margin-top: 20px;
+ }
+ 
+ 
+ @media (max-width: 768px) {
+     .project-title-main {
+         font-size: 28px;
+         padding: 15px;
+     }
+     
+     .gallery-grid {
+         grid-template-columns: 1fr;
+     }
+     
+     .gallery-item {
+         height: 250px;
+     }
+     
+     .info-row {
+         flex-direction: column;
+     }
+     
+     .tables-section {
+         grid-template-columns: 1fr;
+     }
+     
+     .buttons-section-final {
+         flex-direction: column;
+         gap: 20px;
+     }
+     
+     .center-button {
+         position: static;
+         transform: none;
+         order: 1;
+     }
+     
+     .right-button {
+         margin-left: 0;
+         order: 2;
+     }
+     
+     .detail-btn {
+         width: 100%;
+         max-width: 300px;
+         justify-content: center;
+     }
+     
+     .stats-grid-compact {
+         grid-template-columns: repeat(2, 1fr);
+     }
+ }
+ 
+ @media (max-width: 480px) {
+     .stats-grid-compact {
+         grid-template-columns: 1fr;
+     }
+     
+     .project-title-main {
+         font-size: 24px;
+     }
+ }
+ 
+ 
+ .damage-total {
+     color: #dc3545;
+     font-weight: 700;
+ }
+ 
+ .damage-partial {
+     color: #fd7e14;
+     font-weight: 700;
+ }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="project-detail-page">
+    <div class="container">
+        
+        <div class="gallery-section">
+            <h1 class="project-title-main">{{ project.name }}</h1>
+            <div class="gallery-grid">
+                {% if project.image1 %}
+                <div class="gallery-item">
+                    <img src="{{ project.image1.url }}" alt="الصورة الأولى">
+                </div>
+                {% endif %}
+                
+                {% if project.image2 %}
+                <div class="gallery-item">
+                    <img src="{{ project.image2.url }}" alt="الصورة الثانية">
+                </div>
+                {% endif %}
+            </div>
+            <div class="gallery-grid">
+                {% if project.image3 %}
+                <div class="gallery-item">
+                    <img src="{{ project.image3.url }}" alt="الصورة الثالثة">
+                </div>
+                {% endif %}
+                
+                {% if project.image4 %}
+                <div class="gallery-item">
+                    <img src="{{ project.image4.url }}" alt="الصورة الرابعة">
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        
+        <div class="info-section">
+            <div class="info-grid-simple">
+                
+                <div class="info-row">
+                    <div class="info-item-half">
+                        <div class="info-label"><i class="fas fa-tag"></i> نوع المشروع</div>
+                        <div class="info-value">{{ project.get_project_type_display }}</div>
+                    </div>
+                    <div class="info-item-half">
+                        <div class="info-label"><i class="fas fa-flag"></i> حالة المشروع</div>
+                        <div class="info-value">{{ project.get_status_display }}</div>
+                    </div>
+                </div>
+                
+                
+                <div class="info-row">
+                    <div class="info-item-half">
+                        <div class="info-label"><i class="fas fa-map-marker-alt"></i> المحافظة</div>
+                        <div class="info-value">{{ project.get_governorate_display }}</div>
+                    </div>
+                    <div class="info-item-half">
+                        <div class="info-label"><i class="fas fa-location-dot"></i> العنوان التفصيلي</div>
+                        <div class="info-value">{{ project.address }}</div>
+                    </div>
+                </div>
+                
+                
+                <div class="info-row-full">
+                    <div class="info-label"><i class="fas fa-file-alt"></i> الوصف التفصيلي</div>
+                    <div class="info-value-full">
+                        {{ project.description|linebreaks }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        {% if map_html %}
+        <div class="map-section">
+            <h2 class="info-title"><i class="fas fa-map"></i> موقع المشروع على الخريطة</h2>
+            <div class="map-container">
+                {{ map_html|safe }}
+            </div>
+        </div>
+        {% endif %}
+
+        
+        <div class="stats-section">
+            <h2 class="info-title"><i class="fas fa-chart-bar"></i> إحصائيات المشروع</h2>
+            <div class="stats-grid-compact">
+                
+                {% if project.project_type == 'comprehensive' or project.project_type == 'development' %}
+                <div class="stat-item-compact">
+                    <div class="stat-icon"><i class="fas fa-ruler-combined"></i></div>
+                    <div class="stat-value">{{ project.area|default:"0" }} م²</div>
+                    <div class="stat-label">المساحة</div>
+                </div>
+                {% endif %}
+                
+               
+                {% if project.damage_type %}
+                <div class="stat-item-compact">
+                    <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="stat-value {% if project.damage_type == 'total' %}damage-total{% else %}damage-partial{% endif %}">
+                        {{ project.get_damage_type_display }}
+                    </div>
+                    <div class="stat-label">نوع الضرر</div>
+                </div>
+                {% endif %}
+                
+                
+                <div class="stat-item-compact">
+                    <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="stat-value">${{ formatted_cost }}</div>
+                    <div class="stat-label">الكلفة المادية</div>
+                </div>
+                
+                
+                <div class="stat-item-compact">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stat-value">{{ project.duration|default:"غير محدد" }}</div>
+                    <div class="stat-label">المدة</div>
+                </div>
+                
+                
+                <div class="stat-item-compact">
+                    <div class="stat-icon"><i class="fas fa-star"></i></div>
+                    <div class="stat-value">{{ project.priority_score }}</div>
+                    <div class="stat-label">درجة التصويت</div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="tables-section">
+            
+            <div class="table-card">
+                <h3 class="table-title"><i class="fas fa-comments"></i> التعليقات</h3>
+                <div class="empty-table">
+                    <i class="fas fa-comment-slash fa-3x mb-3" style="color: #ddd;"></i>
+                    <p>لا يوجد تعليقات حالياً</p>
+                    {% if user_role == 'citizen' %}
+                    <button class="detail-btn mt-3" id="commentBtn">
+                        <i class="fas fa-plus-circle"></i> إضافة تعليق
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            
+            
+            <div class="table-card">
+                <h3 class="table-title"><i class="fas fa-hand-holding-usd"></i> التبرعات</h3>
+                <div class="empty-table">
+                    <i class="fas fa-donate fa-3x mb-3" style="color: #ddd;"></i>
+                    <p>لا يوجد تبرعات حالياً</p>
+                    {% if user_role == 'citizen' %}
+                    <button class="detail-btn mt-3" id="donateBtn">
+                        <i class="fas fa-donate"></i> تبرع الآن
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            
+            
+            <div class="table-card">
+                <h3 class="table-title"><i class="fas fa-hands-helping"></i> المنظمة المتبنية</h3>
+                <div class="empty-table">
+                    <i class="fas fa-building fa-3x mb-3" style="color: #ddd;"></i>
+                    <p>لا يوجد منظمة تبنت المشروع</p>
+                    {% if user_role == 'organization' %}
+                    <button class="detail-btn mt-3" id="adoptBtn">
+                        <i class="fas fa-handshake"></i> تبني المشروع
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="buttons-section-final">
+             
+    {% if user_role == 'citizen' %}
+    <div class="left-buttons">
+        <button class="detail-btn" id="voteBtn">
+            <i class="fas fa-vote-yea"></i> تصويت
+        </button>
+    </div>
+    {% endif %}
+            
+            <div class="center-button">
+                {% if user_role == 'system_admin' %}
+        
+        <a href="{% url 'projects:project_list' %}" class="detail-btn secondary">
+            <i class="fas fa-arrow-right"></i> العودة
+        </a>
+    {% else %}
+        
+        <a href="{% url 'projects:projects_by_type_public' project.project_type %}" 
+           class="detail-btn secondary">
+            <i class="fas fa-arrow-right"></i> العودة
+        </a>
+    {% endif %}
+</div>
+            
+            
+            {% if user_role == 'system_admin' %}
+            <div class="right-button">
+                
+        {% if not project.contractor %}
+                <button class="detail-btn warning assign-contractor-btn">
+                    <i class="fas fa-user-tie"></i> تعيين متعهد
+                </button>
+                {% endif %}
+
+            
+        {% if project.status == 'in_progress' and project.contractor %}
+        <button class="detail-btn" id="projectStagesBtn">
+            <i class="fas fa-tasks"></i> مراحل إنجاز المشروع
+        </button>
+        {% endif %}
+        </div>
+         {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<div id="assignContractorModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background: transparent; border: none; box-shadow: none;">
+            
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+
+{{ chart_data_json|json_script:"chart-data" }}
+
+<script>
+
+var chartData = JSON.parse(document.getElementById('chart-data').textContent);
+var projectCost = parseFloat(chartData.cost) || 0;
+var projectArea = parseFloat(chartData.area) || 0;
+var projectDuration = chartData.duration;
+
+$(document).ready(function() {
+
+    
+    if (projectCost > 0) {
+        var costContainer = document.createElement('div');
+        costContainer.className = 'chart-container mb-4';
+        costContainer.style.height = '250px';
+        costContainer.style.width = '100%';
+        
+        var costCanvas = document.createElement('canvas');
+        costContainer.appendChild(costCanvas);
+        $('.stats-section').append(costContainer);
+        
+        new Chart(costCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: ['الميزانية', 'المصاريف'],
+                datasets: [{
+                    data: [projectCost * 0.7, projectCost * 0.3],
+                    backgroundColor: ['#2b6b42', '#3a8a57'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        rtl: true,
+                        labels: {
+                            font: {
+                                family: 'Cairo',
+                                size: 14
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'توزيع الميزانية',
+                        font: {
+                            size: 16,
+                            family: 'Cairo'
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    
+    if (projectArea > 0) {
+        var areaContainer = document.createElement('div');
+        areaContainer.className = 'chart-container mb-4';
+        areaContainer.style.height = '250px';
+        areaContainer.style.width = '100%';
+        
+        var areaDiv = document.createElement('div');
+        areaDiv.style.height = '100%';
+        areaDiv.style.width = '100%';
+        areaContainer.appendChild(areaDiv);
+        $('.stats-section').append(areaContainer);
+        
+        var areaTrace = {
+            x: ['المساحة'],
+            y: [projectArea],
+            type: 'bar',
+            marker: {
+                color: '#2b6b42'
+            },
+            text: [projectArea.toFixed(2) + ' م² '],
+            textposition: 'auto'
+        };
+        
+        var areaLayout = {
+            title: 'المساحة بالمتر المربع',
+            font: {
+                family: 'Cairo'
+            },
+            yaxis: {
+                title: 'المساحة (م²)',
+                titlefont: {
+                    family: 'Cairo'
+                }
+            },
+            xaxis: {
+                tickfont: {
+                    family: 'Cairo'
+                }
+            }
+        };
+        
+        Plotly.newPlot(areaDiv, [areaTrace], areaLayout);
+    }
+    
+    
+    $('.gallery-item').click(function() {
+        var imgSrc = $(this).find('img').attr('src');
+        var modal = `
+        <div class="modal fade" id="imageModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">صورة المشروع</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <img src="${imgSrc}" style="width: 100%; border-radius: 10px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+        $('body').append(modal);
+        $('#imageModal').modal('show');
+        
+        $('#imageModal').on('hidden.bs.modal', function() {
+            $(this).remove();
+        });
+    });
+    
+    
+    $('.detail-btn').hover(
+        function() {
+            $(this).css('transform', 'translateY(-3px)');
+        },
+        function() {
+            $(this).css('transform', 'translateY(0)');
+        }
+    );
+    
+    
+    $('.assign-contractor-btn').click(function() {
+       $.ajax({
+            url: "{% url 'projects:assign_contractor' project.pk %}",
+            type: 'GET',
+            success: function(response) {
+                $('#assignContractorModal .modal-content').html(response);
+                $('#assignContractorModal').modal('show');
+            },
+            error: function() {
+                alert('حدث خطأ أثناء تحميل نموذج التعيين');
+            }
+    });
+});
+
+    $(document).on('submit', '#assignContractorForm', function(e) {
+        e.preventDefault();
+        
+        var $form = $(this);
+        var $btn = $('#assignSubmitBtn');
+        
+      
+        $btn.prop('disabled', true);
+        $btn.html('<span class="loading-spinner"></span> جاري التعيين...');
+        
+        $.ajax({
+            url: "{% url 'projects:assign_contractor' project.pk %}",
+            type: 'POST',
+            data: $form.serialize(),
+            success: function(response) {
+                if (response.success) {
+                    
+                    $('#assignContractorModal').modal('hide');
+                    
+                    
+                    alert('تم تعيين المتعهد بنجاح لهذا المشروع');
+                    
+                    
+                    location.reload();
+                } else {
+                    alert('خطأ: ' + response.error);
+                    $btn.prop('disabled', false);
+                    $btn.html('<i class="fas fa-user-tie me-2"></i> تعيين المتعهد');
+                }
+            },
+            error: function() {
+                alert('حدث خطأ أثناء تعيين المتعهد');
+                $btn.prop('disabled', false);
+                $btn.html('<i class="fas fa-user-tie me-2"></i> تعيين المتعهد');
+            }
+        });
+    });
+    
+   if ("{{ project.status }}" === "in_progress" 
+    && "{{ user_role }}" === "system_admin" 
+    && "{{ project.contractor|yesno:'true,false' }}" === "true") {
+    
+    $('.right-buttons').prepend(`
+        <button class="detail-btn" id="projectStagesBtn">
+            <i class="fas fa-tasks"></i> مراحل إنجاز المشروع
+        </button>
+    `);
+}
+});
+</script>
+{% endblock %}

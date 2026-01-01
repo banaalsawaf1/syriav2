@@ -1,0 +1,129 @@
+<div class="assign-contractor-modal">
+    <style>
+        .assign-modal-box {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 2px solid #ffc107;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 15px 40px rgba(255, 193, 7, 0.3);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .assign-title {
+            color: #ffc107;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 700;
+            font-size: 28px;
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .assign-form-group {
+            margin-bottom: 25px;
+        }
+        
+        .assign-form-group label {
+            color: #2b6b42;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .contractor-select {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #ffc107;
+            border-radius: 0;
+            color: #2b6b42;
+            padding: 10px 0;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .contractor-select option {
+            background: rgba(255, 255, 255, 0.9);
+            color: #2b6b42;
+            padding: 10px;
+        }
+        
+        .contractor-select option:hover {
+            background-color: #ffc107 !important;
+        }
+        
+        .assign-btn {
+            background-color: #ffc107;
+            color: #212529;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            width: 100%;
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.3);
+            transition: all 0.3s;
+            margin-top: 20px;
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .assign-btn:hover {
+            background-color: #e0a800;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 193, 7, 0.4);
+            color: #212529;
+        }
+        
+        .assign-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    
+    <div class="assign-modal-box">
+        <h2 class="assign-title">تعيين متعهد</h2>
+        
+        <form id="assignContractorForm" method="post">
+            {% csrf_token %}
+            
+            <div class="assign-form-group">
+                <label for="id_contractor">{{ form.contractor.label }}</label>
+                {{ form.contractor }}
+            </div>
+            
+            <button type="submit" class="assign-btn" id="assignSubmitBtn">
+                <i class="fas fa-user-tie me-2"></i> تعيين المتعهد
+            </button>
+        </form>
+    </div>
+</div>

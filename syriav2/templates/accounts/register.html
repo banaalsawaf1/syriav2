@@ -1,0 +1,91 @@
+
+{% extends 'base/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    
+    $('#id_role').change(function() {
+        var role = $(this).val();
+        if (role === 'organization' || role === 'contractor') {
+            $('#document-field').show();
+            $('#id_document').prop('required', true);
+        } else {
+            $('#document-field').hide();
+            $('#id_document').prop('required', false);
+        }
+    });
+    
+    
+    $('#id_role').trigger('change');
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page register-page">
+    <div class="auth-box">
+        <h2 class="auth-title">إنشاء حساب جديد</h2>
+        
+       
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+                {{ error }}
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <form method="post" enctype="multipart/form-data" class="auth-form">
+            {% csrf_token %}
+            
+           
+            <div class="form-group">
+                <label for="id_username">اسم المستخدم</label>
+                {{ form.username|as_crispy_field }}
+            </div>
+            
+            
+            <div class="form-group">
+                <label for="id_phone_number">رقم الهاتف</label>
+                {{ form.phone_number|as_crispy_field }}
+            </div>
+            
+           
+            <div class="form-group"><label for="id_password1">كلمة المرور</label>
+                {{ form.password1|as_crispy_field }}
+            </div>
+            
+            
+            <div class="form-group">
+                <label for="id_password2">تأكيد كلمة المرور</label>
+                {{ form.password2|as_crispy_field }}
+            </div>
+            
+            
+            <div class="form-group">
+                <label for="id_role">الدور</label>
+                {{ form.role|as_crispy_field }}
+            </div>
+            
+            
+            <div class="form-group" id="document-field" style="display: none;">
+                <label for="id_document">وثيقة الهوية</label>
+                {{ form.document|as_crispy_field }}
+            </div>
+            
+            <button type="submit" class="auth-btn">إنشاء حساب</button>
+        </form>
+        
+        <div class="auth-link">
+            <p>لديك حساب بالفعل؟ <a href="{% url 'accounts:login' %}">تسجيل الدخول</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

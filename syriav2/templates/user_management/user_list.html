@@ -1,0 +1,524 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .users-management-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, rgba(78, 231, 134, 0.316) 0%, rgba(255, 255, 255, 0.9) 100%);
+        padding-top: 40px;
+        padding-bottom: 60px;
+    }
+
+    .users-title {
+        color: #2b6b42;
+        text-align: center;
+        margin: 20px 0 30px 0;
+        font-size: 36px;
+        font-weight: 700;
+        font-family: 'Cairo', sans-serif;
+    }
+
+    .users-stats {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .stat-item {
+        text-align: center;
+        flex: 1;
+        min-width: 200px;
+        padding: 15px;
+        border-radius: 10px;
+        background: rgba(43, 107, 66, 0.05);
+        transition: all 0.3s;
+    }
+
+    .stat-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(43, 107, 66, 0.1);
+    }
+
+    .stat-number {
+        font-size: 28px;
+        font-weight: 700;
+        color: #2b6b42;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: #666;
+        font-weight: 600;
+    }
+
+    .users-count {
+        color: #2b6b42;
+        font-size: 18px;
+        font-weight: 600;
+        margin: 20px 0;
+        padding: 10px 20px;
+        background: rgba(43, 107, 66, 0.1);
+        border-radius: 10px;
+        display: inline-block;
+    }
+
+    
+    .users-table-container {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-bottom: 40px;
+        overflow-x: auto;
+    }
+
+    .users-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border: none;
+        font-family: 'Cairo', sans-serif;
+    }
+
+    .users-table th {
+        background-color: #2b6b42;
+        color: white;
+        padding: 18px 15px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 16px;
+        border: none;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .users-table td {
+        border: 1px solid rgba(43, 107, 66, 0.2);
+        padding: 15px;
+        text-align: center;
+        color: #333;
+        vertical-align: middle;
+        font-size: 14px;
+    }
+
+    .users-table tr {
+        transition: all 0.3s;
+    }
+
+    .users-table tbody tr:hover {
+        background-color: rgba(43, 107, 66, 0.05);
+        transform: scale(1.01);
+    }
+
+    
+    .deleted-row {
+        background-color: rgba(220, 53, 69, 0.1) !important;
+        opacity: 0.8;
+        border-left: 4px solid #dc3545 !important;
+    }
+
+    .deleted-row:hover {
+        background-color: rgba(220, 53, 69, 0.15) !important;
+        opacity: 0.9;
+    }
+
+    
+    .deleted-username {
+        color: #dc3545 !important;
+        text-decoration: line-through;
+    }
+
+    
+    .btn-edit.disabled, .btn-delete.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .btn-edit, .btn-delete {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all 0.3s;
+        position: relative;
+        cursor: pointer;
+        border: none;
+    }
+
+    .btn-edit {
+        background: rgba(43, 107, 66, 0.1);
+        color: #2b6b42;
+    }
+
+    .btn-edit:hover {
+        background: #2b6b42;
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(43, 107, 66, 0.3);
+    }
+
+    .btn-delete {
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+
+    .btn-delete:hover {
+        background: #dc3545;
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+    }
+
+    
+    .btn-edit::after, .btn-delete::after {
+        content: attr(title);
+        position: absolute;
+        top: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #333;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s;
+        z-index: 1000;
+        pointer-events: none;
+    }
+
+    .btn-edit:hover::after, .btn-delete:hover::after {
+        opacity: 1;
+        visibility: visible;
+        top: -35px;
+    }
+
+    
+    .add-user-btn {
+        background-color: #2b6b42;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 16px 45px;
+        font-size: 18px;
+        font-weight: 600;
+        box-shadow: 0 6px 20px rgba(43, 107, 66, 0.3);
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-family: 'Cairo', sans-serif;
+    }
+
+    .add-user-btn:hover {
+        background-color: #3a8a57;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(43, 107, 66, 0.4);
+        color: white;
+    }
+
+    
+    .username-link {
+        color: #2b6b42;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+        padding: 5px 0;
+        display: inline-block;
+        position: relative;
+    }
+
+    .username-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #2b6b42;
+        transition: width 0.3s;
+    }
+
+    .username-link:hover {
+        color: #3a8a57;
+    }
+
+    .username-link:hover::after {
+        width: 100%;
+    }
+
+    
+    .no-users {
+        text-align: center;
+        padding: 50px 20px;
+        color: #666;
+        font-size: 18px;
+    }
+
+    .no-users i {
+        font-size: 48px;
+        color: #ddd;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    @media (max-width: 768px) {
+        .users-table-container {
+            padding: 15px;
+        }
+
+        .users-table {
+            font-size: 12px;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 10px 5px;
+        }
+
+        .action-buttons {
+            gap: 5px;
+        }
+
+        .btn-edit, .btn-delete {
+            width: 35px;
+            height: 35px;
+        }
+
+        .stat-item {
+            min-width: 150px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stat-item {
+            min-width: 100%;
+        }
+
+        .add-user-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    
+    .back-btn {
+        background-color: transparent;
+        color: #2b6b42;
+        border: 2px solid #2b6b42;
+        border-radius: 50px;
+        padding: 10px 30px;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 30px;
+    }
+
+    .back-btn:hover {
+        background-color: #2b6b42;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(43, 107, 66, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="users-management-page">
+    <div class="container">
+        
+        <a href="{% url 'accounts:profile' %}" class="back-btn">
+            <i class="fas fa-arrow-right"></i> العودة إلى الملف الشخصي
+        </a>
+
+        
+        <h1 class="users-title">Users</h1>
+
+        
+        <div class="users-stats">
+            <div class="stat-item">
+                <span class="stat-number">{{ users_count }}</span>
+                <span class="stat-label">جميع المستخدمين</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ deleted_users_count }}</span>
+                <span class="stat-label">المستخدمين المحذوفين</span>
+            </div>
+        </div>
+
+        
+        <div class="users-stats" style="margin-top: 30px;">
+            <a href="{% url 'user_management:users_by_role' 'citizen' %}" class="stat-item" style="text-decoration: none; color: inherit;">
+                <span class="stat-number">{{ citizen_count }}</span>
+                <span class="stat-label">المواطنون</span>
+            </a>
+            <a href="{% url 'user_management:users_by_role' 'organization' %}" class="stat-item" style="text-decoration: none; color: inherit;">
+                <span class="stat-number">{{ organization_count }}</span>
+                <span class="stat-label">المنظمات</span>
+            </a>
+            <a href="{% url 'user_management:users_by_role' 'contractor' %}" class="stat-item" style="text-decoration: none; color: inherit;">
+                <span class="stat-number">{{ contractor_count }}</span>
+                <span class="stat-label">المتعهدون</span>
+            </a>
+        </div>
+
+       
+        <div class="users-table-container">
+            {% if users %}
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>اسم المستخدم</th>
+                            <th>الدور</th>
+                            <th>رقم الهاتف</th>
+                            <th>تاريخ الإنشاء</th>
+                            <th>الإدارة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr class="{% if user.is_deleted %}deleted-row{% endif %}">
+                                <td>{{ user.id }}</td>
+                                <td>
+                                    <span class="{% if user.is_deleted %}deleted-username{% else %}username-link{% endif %}">
+                                        {{ user.username }}
+                                    </span>
+                                </td>
+                                <td>{{ user.get_role_display }}</td>
+                                <td>{{ user.phone_number|default:"غير محدد" }}</td>
+                                <td>
+        {{ user.date_joined|date:"Y/m/d" }}
+    </td>
+                                <td>
+                                    <div class="action-buttons">
+                                      
+                                        {% if not user.is_deleted %}
+                                            <a href="{% url 'user_management:user_update' user.pk %}" class="btn-edit" title="تعديل">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        {% else %}
+                                            <span class="btn-edit disabled" title="لا يمكن تعديل مستخدم محذوف">
+                                                <i class="fas fa-edit"></i>
+                                            </span>
+                                        {% endif %}
+
+                                        
+                                        {% if not user.is_deleted %}
+                                            <button class="btn-delete" title="حذف" onclick="showDeleteModal('{{ user.pk }}', '{{ user.username|escapejs }}')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        {% else %}
+                                            <span class="btn-delete disabled" title="المستخدم محذوف بالفعل">
+                                                <i class="fas fa-trash"></i>
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="no-users">
+                    <i class="fas fa-user-slash"></i>
+                    <p>لا يوجد مستخدمين حالياً</p>
+                    <p class="text-muted mt-2">ابدأ بإضافة مستخدم جديد بالضغط على زر "إضافة مستخدم"</p>
+                </div>
+            {% endif %}
+        </div>
+
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'user_management:user_create' %}" class="add-user-btn">
+                <i class="fas fa-plus me-2"></i> إضافة مستخدم
+            </a>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #dc3545; color: white;">
+                <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i> تأكيد الحذف</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteMessage"></p>
+                <p class="text-muted mt-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    هذا الإجراء لا يمكن التراجع عنه. سيتم حذف المستخدم وجميع بياناته بشكل دائم
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i> إلغاء
+                </button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i> حذف
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+   
+    function showDeleteModal(userId, username) {
+        document.getElementById('deleteMessage').innerHTML = 
+            'هل أنت متأكد من رغبتك في حذف المستخدم <strong>"' + username + '"</strong>؟';
+        document.getElementById('deleteForm').action = 
+            '/user-management/' + userId + '/delete/';
+        
+        var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        deleteModal.show();
+    }
+
+   
+    $(document).ready(function() {
+        $('.users-table tbody tr').hover(
+            function() {
+                $(this).css('transform', 'scale(1.01)');
+            },
+            function() {
+                $(this).css('transform', 'scale(1)');
+            }
+        );
+    });
+</script>
+{% endblock %}

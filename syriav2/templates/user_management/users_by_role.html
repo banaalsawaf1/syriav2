@@ -1,0 +1,553 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+   
+    .users-management-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, rgba(78, 231, 134, 0.316) 0%, rgba(255, 255, 255, 0.9) 100%);
+        padding-top: 40px;
+        padding-bottom: 60px;
+    }
+
+    .users-title {
+        color: #2b6b42;
+        text-align: center;
+        margin: 20px 0 30px 0;
+        font-size: 36px;
+        font-weight: 700;
+        font-family: 'Cairo', sans-serif;
+    }
+
+    .role-badge {
+        background-color: #2b6b42;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 18px;
+        margin-bottom: 20px;
+        display: inline-block;
+    }
+
+    .back-btn {
+        background-color: transparent;
+        color: #2b6b42;
+        border: 2px solid #2b6b42;
+        border-radius: 50px;
+        padding: 10px 30px;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 30px;
+    }
+
+    .back-btn:hover {
+        background-color: #2b6b42;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(43, 107, 66, 0.3);
+    }
+
+    
+    .users-table-container {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-bottom: 40px;
+        overflow-x: auto;
+    }
+
+    .users-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border: none;
+        font-family: 'Cairo', sans-serif;
+    }
+
+    .users-table th {
+        background-color: #2b6b42;
+        color: white;
+        padding: 18px 15px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 16px;
+        border: none;
+    }
+
+    .users-table td {
+        border: 1px solid rgba(43, 107, 66, 0.2);
+        padding: 15px;
+        text-align: center;
+        color: #333;
+        vertical-align: middle;
+        font-size: 14px;
+    }
+
+    .users-table tr {
+        transition: all 0.3s;
+    }
+
+    .users-table tbody tr:hover {
+        background-color: rgba(43, 107, 66, 0.05);
+        transform: scale(1.01);
+    }
+
+    
+    .deleted-row {
+        background-color: rgba(220, 53, 69, 0.1) !important;
+        opacity: 0.8;
+        border-left: 4px solid #dc3545 !important;
+    }
+
+    .deleted-row:hover {
+        background-color: rgba(220, 53, 69, 0.15) !important;
+        opacity: 0.9;
+    }
+
+    .deleted-username {
+        color: #dc3545 !important;
+        text-decoration: line-through;
+    }
+
+    
+    .btn-edit.disabled, .btn-delete.disabled, .btn-view.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .btn-edit, .btn-delete {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all 0.3s;
+        position: relative;
+        cursor: pointer;
+        border: none;
+    }
+
+    .btn-edit {
+        background: rgba(43, 107, 66, 0.1);
+        color: #2b6b42;
+    }
+
+    .btn-edit:hover {
+        background: #2b6b42;
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(43, 107, 66, 0.3);
+    }
+
+    .btn-delete {
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+
+    .btn-delete:hover {
+        background: #dc3545;
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+    }
+
+    .btn-view {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        margin: 0 auto !important;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all 0.3s;
+        position: relative;
+        cursor: pointer;
+        border: none;
+        background: rgba(43, 107, 66, 0.1);
+        color: #2b6b42;
+    }
+
+    .btn-view:hover {
+        background: #2b6b42;
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(43, 107, 66, 0.3);
+    }
+
+    
+    .btn-edit::after, .btn-delete::after, .btn-view::after {
+        content: attr(title);
+        position: absolute;
+        top: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #333;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s;
+        z-index: 1000;
+        pointer-events: none;
+    }
+
+    .btn-edit:hover::after, .btn-delete:hover::after, .btn-view:hover::after {
+        opacity: 1;
+        visibility: visible;
+        top: -35px;
+    }
+
+    .projects-dropdown-btn {
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        background: rgba(43, 107, 66, 0.1);
+        color: #2b6b42;
+        width: 120px;
+    }
+    .projects-dropdown-btn:hover{
+    background: #2b6b42;
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(43, 107, 66, 0.3);
+    }
+
+
+.dropdown-menu {
+    max-height: 300px !important;
+    overflow-y: auto !important;
+    text-align: right !important;
+    border: 1px solid #2b6b42 !important;
+    border-radius: 8px !important;
+    background-color: #ffffff;
+    bottom: 100%;
+}
+
+.dropdown-item {
+    color: #2b6b42 !important;
+    padding: 10px 15px !important;
+    transition: all 0.2s !important;
+    text-align: right !important;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(43, 107, 66, 0.1) !important;
+    color: #2b6b42 !important;
+}
+
+.dropdown-item i {
+    width: 20px !important;
+    text-align: center !important;
+}
+
+.dropdown-item small {
+    font-size: 12px !important;
+    margin-top: 5px !important;
+    color: #666 !important;
+}
+    .project-link {
+        display: block;
+        color: #2b6b42;
+        padding: 8px 12px;
+        text-decoration: none;
+        border-radius: 4px;
+    margin-bottom: 5px;
+    transition: all 0.2s;
+    }
+
+    .project-link:hover {
+        color: #3a8a57;
+        text-decoration: underline;
+    }
+
+    .no-projects {
+        color: #666;
+        font-style: italic;
+    }
+
+    .no-users {
+        text-align: center;
+        padding: 50px 20px;
+        color: #666;
+        font-size: 18px;
+    }
+
+    .no-users i {
+        font-size: 48px;
+        color: #ddd;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    @media (max-width: 768px) {
+        .users-table-container {
+            padding: 15px;
+        }
+
+        .users-table {
+            font-size: 12px;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 10px 5px;
+        }
+
+        .action-buttons {
+            gap: 5px;
+        }
+
+        .btn-edit, .btn-delete, .btn-view {
+            width: 35px;
+            height: 35px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="users-management-page">
+    <div class="container">
+       
+        <a href="{% url 'user_management:user_list' %}" class="back-btn">
+            <i class="fas fa-arrow-right"></i> العودة إلى إدارة المستخدمين
+        </a>
+
+        
+        <h1 class="users-title">{{ role_name }}</h1>
+
+        <div class="role-badge">
+            <i class="fas fa-user-tag"></i> الدور: {{ role_name }}
+        </div>
+
+        <div style="background: rgba(43, 107, 66, 0.1); padding: 15px; border-radius: 10px; margin: 20px 0; display: inline-block;">
+            <i class="fas fa-chart-bar me-2"></i>
+           عدد المستخدمين: <strong>{{ users.count }}</strong>
+        </div>
+        
+        <div class="users-table-container">
+            {% if users %}
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>اسم المستخدم</th>
+                            <th>رقم الهاتف</th>
+                            {% if role == 'organization' or role == 'contractor' %}
+                                <th>الوثيقة</th>
+                            {% endif %}
+                            {% if role == 'organization' %}
+                                <th>المشاريع المتبناة</th>
+                            {% elif role == 'contractor' %}
+                                <th>المشاريع المعينة</th>
+                            {% endif %}
+                            <th>الإدارة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr class="{% if user.is_deleted %}deleted-row{% endif %}">
+                                <td>{{ user.id }}</td>
+                                <td>
+                                    <span class="{% if user.is_deleted %}deleted-username{% endif %}">
+                                        {{ user.username }}
+                                    </span>
+                                </td>
+                                <td>{{ user.phone_number|default:"غير محدد" }}</td>
+                                
+                                {% if role == 'organization' or role == 'contractor' %}
+                                    <td>
+                                        {% if user.document and not user.is_deleted %}
+                                            <a href="{{ user.document.url }}" target="_blank" class="btn-view" title="عرض الوثيقة">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        {% elif user.is_deleted %}
+                                            <span class="btn-view disabled" title="لا يمكن عرض وثيقة مستخدم محذوف">
+                                                <i class="fas fa-eye"></i>
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">لا توجد وثيقة</span>
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                                
+                                {% if role == 'organization' %}
+                                   <td>
+    {% if not user.is_deleted %}
+        {% if user.adopted_projects %}
+            <div class="dropdown">
+                <button class="btn projects-dropdown-btn dropdown-toggle" 
+                        type="button" 
+                        data-bs-toggle="dropdown" 
+                        aria-expanded="false">
+                    {{ user.adopted_projects|length }} مشروع
+                </button>
+                <ul class="dropdown-menu">
+                    {% for project in user.adopted_projects %}
+                        <li>
+                            <a class="dropdown-item" href="{% url 'projects:project_detail' project.pk %}">
+                                <i class="fas fa-project-diagram me-2"></i>{{ project.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <span class="no-projects">لا يوجد</span>
+        {% endif %}
+    {% else %}
+        <span class="text-muted">-</span>
+    {% endif %}
+</td>
+                                {% elif role == 'contractor' %}
+                                    <td>
+    {% if not user.is_deleted %}
+        {% if user.assigned_projects %}
+            <div class="dropdown">
+                <button class="btn projects-dropdown-btn dropdown-toggle" 
+                        type="button" 
+                        data-bs-toggle="dropdown" 
+                        aria-expanded="false">
+                    {{ user.assigned_projects.count }} مشروع
+                </button>
+                <ul class="dropdown-menu">
+                    {% for project in user.assigned_projects %}
+                        <li>
+                            <a class="dropdown-item" href="{% url 'projects:project_detail' project.pk %}">
+                                <i class="fas fa-hard-hat me-2"></i>{{ project.name }}
+                                <small class="text-muted d-block">
+                                    الحالة: {{ project.get_status_display }}
+                                </small>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <span class="no-projects">لا يوجد</span>
+        {% endif %}
+    {% else %}
+        <span class="text-muted">-</span>
+    {% endif %}
+</td>
+                                {% endif %}
+                                
+                                <td>
+                                    <div class="action-buttons">
+                                       
+                                        {% if not user.is_deleted %}
+                                            <a href="{% url 'user_management:user_update' user.pk %}" class="btn-edit" title="تعديل">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        {% else %}
+                                            <span class="btn-edit disabled" title="لا يمكن تعديل مستخدم محذوف">
+                                                <i class="fas fa-edit"></i>
+                                            </span>
+                                        {% endif %}
+
+                                  
+                                        {% if not user.is_deleted %}
+                                            <button class="btn-delete" title="حذف" onclick="showDeleteModal('{{ user.pk }}', '{{ user.username|escapejs }}')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        {% else %}
+                                            <span class="btn-delete disabled" title="المستخدم محذوف بالفعل">
+                                                <i class="fas fa-trash"></i>
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="no-users">
+                    <i class="fas fa-user-slash"></i>
+                    <p>لا يوجد مستخدمين من نوع {{ role_name }} حالياً</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #dc3545; color: white;">
+                <h5 class="modal-title">تأكيد الحذف</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteMessage"></p>
+                <p class="text-muted mt-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    هذا الإجراء لا يمكن التراجع عنه. سيتم حذف المستخدم وجميع بياناته بشكل دائم.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i> إلغاء
+                </button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i> حذف
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    
+    function showDeleteModal(userId, username) {
+        document.getElementById('deleteMessage').innerHTML = 
+            'هل أنت متأكد من رغبتك في حذف المستخدم <strong>"' + username + '"</strong>؟';
+        document.getElementById('deleteForm').action = 
+            '/user-management/' + userId + '/delete/';
+        
+        var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        deleteModal.show();
+    }
+
+    
+    $(document).ready(function() {
+        $('.users-table tbody tr').hover(
+            function() {
+                $(this).css('transform', 'scale(1.01)');
+            },
+            function() {
+                $(this).css('transform', 'scale(1)');
+            }
+        );
+    });
+</script>
+{% endblock %}

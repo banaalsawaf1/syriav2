@@ -1,0 +1,337 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+<style>
+    
+    
+    .profile-header-custom {
+        background-color: #2b6b42 !important;
+        color: white !important;
+        border-bottom: 2px solid #2b6b42 !important;
+        padding: 25px !important;
+        text-align: center;
+        border-radius: 15px 15px 0 0 !important;
+    }
+    
+    .profile-card-custom {
+        border: 2px solid #2b6b42 !important;
+        border-radius: 20px !important;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(43, 107, 66, 0.3);
+        background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .profile-icon-custom {
+        width: 150px;
+        height: 150px;
+        background-color: #2b6b42;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        border: 3px solid white;
+        box-shadow: 0 0 0 3px #2b6b42;
+        color: white;
+        font-size: 60px;
+        font-weight: bold;
+    }
+    
+    .profile-table th {color: #2b6b42 !important;
+        font-weight: 700 !important;
+        border-color: rgba(43, 107, 66, 0.2) !important;
+        padding: 15px !important;
+    }
+    
+    .profile-table td {
+        color: #2b6b42 !important;
+        border-color: rgba(43, 107, 66, 0.2) !important;
+        padding: 15px !important;
+    }
+    
+    
+    .management-section {
+        margin-top: 40px;
+        display: none; 
+    }
+    
+    .management-row {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+    
+    .management-item {
+        width: 300px;
+        height: 250px;
+    }
+    
+    .management-card {
+        position: relative;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(43, 107, 66, 0.3);
+        transition: all 0.3s;
+        text-decoration: none;
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+    
+    .management-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(43, 107, 66, 0.4);
+    }
+    
+    .management-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .management-title {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(43, 107, 66, 0.9);
+        color: white;
+        text-align: center;
+        padding: 15px;
+        font-size: 20px;
+        font-weight: 600;
+    }
+    
+    @media (max-width: 768px) {
+        .management-row {
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .management-item {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-page" style="min-height: 100vh; background: linear-gradient(135deg, rgba(78, 231, 134, 0.316) 0%, rgba(255, 255, 255, 0.9) 100%); padding-top: 20px;">
+
+    <div class="container mt-0 pt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="profile-card-custom">
+                    
+                    <div class="card-header profile-header-custom">
+                        <h3 class="mb-0">
+                            <i class="fas fa-user-circle me-2"></i>الملف الشخصي
+                        </h3>
+                    </div>
+                    
+                    
+                    <div class="card-body p-4">
+                        <div class="row">
+                            
+                            <div class="col-md-4 text-center mb-4 mb-md-0">
+                                <div class="profile-icon-custom">
+                                    <span>{{ user.username|first|upper }}</span>
+                                </div>
+                                
+                                
+                                <h4 class="mt-3" style="color: #2b6b42; font-weight: 700;">
+                                    {{ user.username }}
+                                </h4>
+                                
+                                
+                                <div class="badge rounded-pill px-3 py-2 mt-2" 
+                                     style="background-color: rgba(43, 107, 66, 0.1); color: #2b6b42; font-size: 14px;">
+                                    <i class="fas fa-user-tag me-1"></i>{{ user.get_role_display }}
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="col-md-8">
+                                <h4 class="mb-4" style="color: #2b6b42; border-bottom: 2px solid #2b6b42; padding-bottom: 10px;">
+                                    <i class="fas fa-info-circle me-2"></i>معلومات الحساب
+                                </h4>
+                                
+                                <table class="table profile-table">
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row"><i class="fas fa-user me-2"></i>اسم المستخدم:</th>
+                                            <td>{{ user.username }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"><i class="fas fa-id-card me-2"></i>الدور:</th>
+                                            <td>{{ user.get_role_display }}</td>
+                                        </tr>
+                                        {% if user.role != 'system_admin' %}
+                                        <tr>
+                                        <th scope="row"><i class="fas fa-phone me-2"></i>رقم الهاتف:</th>
+                                        <td>{{ user.phone_number|default:"غير محدد" }}</td>
+                                        </tr>
+                                        {% endif %}   
+                                         {% if user.role != 'system_admin' %}
+                                               <tr>
+                                            <th scope="row"><i class="fas fa-calendar-alt me-2"></i>تاريخ الانضمام:</th>
+                                            <td>{{ user.date_joined|date:"Y/m/d" }}</td></tr>{% endif %}
+                                        {% if user.role == 'system_admin' %}
+        <tr>
+            <th scope="row"><i class="fas fa-envelope me-2"></i>البريد الإلكتروني:</th>
+            <td>{{ user.email|default:"غير محدد" }}</td>
+        </tr>
+        {% endif %}
+                                    </tbody>
+                                </table>
+                                
+                                
+                                {% if user.document %}
+                                <div class="mt-4">
+                                    <h5 style="color: #2b6b42;">
+                                        <i class="fas fa-file-alt me-2"></i>الوثيقة المرفوعة:
+                                    </h5>
+                                    <a href="{{ user.document.url }}" target="_blank" 
+                                       class="btn btn-outline-primary mt-2" 
+                                       style="border-color: #2b6b42; color: #2b6b42;">
+                                        <i class="fas fa-eye me-2"></i>عرض الوثيقة
+                                    </a>
+                                </div>
+                                {% endif %}
+                                
+                                
+                                <div class="mt-5 text-center">
+                                    <button onclick="confirmLogout()" class="btn btn-danger btn-logout-custom">
+                                        <i class="fas fa-sign-out-alt me-2"></i>تسجيل الخروج
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+ 
+                {% if user.role == 'system_admin' %}
+                <div id="managementSection" class="management-section" style="display: block;">
+                    
+                    <div class="management-row">
+                        
+                        <div class="management-item">
+                            <a href="{% url 'projects:project_list' %}" class="management-card" id="projectManagement">
+                                <img src="{% static 'images/projectManagement.jpg' %}" alt="Project Management">
+                                <div class="management-title">إدارة المشاريع</div>
+                            </a>
+                        </div>
+                        
+                        
+                        <div class="management-item">
+                            <a href="{% url 'user_management:user_list' %}" class="management-card" id="userManagement">
+                                <img src="{% static 'images/userManagement.jpg' %}" alt="User Management">
+                                <div class="management-title">إدارة المستخدمين</div>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="management-row">
+                
+                        <div class="management-item">
+                            <a href="#" class="management-card" id="voteManagement">
+                                <img src="{% static 'images/votemanagement1.jpg' %}" alt="Vote Management">
+                                <div class="management-title">إدارة التصويتات</div>
+                            </a>
+                        </div>
+                        
+                        
+                        <div class="management-item">
+                            <a href="#" class="management-card" id="reportsManagement">
+                                <img src="{% static 'images/reportsManagement.jpg' %}" alt="Reports Management">
+                                <div class="management-title">إدارة البلاغات</div>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="management-row">
+                        
+                        <div class="management-item">
+                            <a href="#" class="management-card" id="updateManagement">
+                <img src="{% static 'images/updateManagement.jpg' %}" alt="Update Management">
+                                <div class="management-title">إدارة التحديثات</div>
+                            </a>
+                        </div>
+                        
+                        
+                        <div class="management-item">
+                            <a href="#" class="management-card" id="orderManagement">
+                                <img src="{% static 'images/orderManagement.jpg' %}" alt="Order Management">
+                                <div class="management-title">إدارة الطلبات</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmLogout() {
+    if (confirm("هل تريد تسجيل الخروج؟")) {
+        window.location.href = "{% url 'accounts:logout' %}";
+    }
+}
+</script>
+
+{% if user.role == 'system_admin' %}
+<script>
+$(document).ready(function() {
+    
+    $('.management-card').hover(
+        function() {
+            $(this).find('.management-title').css('background', 'rgba(43, 107, 66, 1)');
+        },
+        function() {
+            $(this).find('.management-title').css('background', 'rgba(43, 107, 66, 0.9)');
+        }
+    );
+    
+
+    $('#projectManagement').click(function(e) {
+        e.preventDefault();
+        alert('سيتم توجيهك إلى صفحة إدارة المشاريع');
+    });
+    
+    $('#userManagement').click(function(e) {
+        e.preventDefault();
+        alert('سيتم توجيهك إلى صفحة إدارة المستخدمين');
+    });
+    
+    $('#voteManagement').click(function(e) {
+        e.preventDefault();
+        alert('سيتم توجيهك إلى صفحة إدارة التصويتات');
+    });
+    
+    $('#reportsManagement').click(function(e) {
+        e.preventDefault();
+        alert('سيتم توجيهك إلى صفحة إدارة البلاغات');
+    });
+    
+    $('#updateManagement').click(function(e) {
+        e.preventDefault();
+        alert('سيتم توجيهك إلى صفحة إدارة تحديثات المتعهدين');
+    });
+    
+    $('#orderManagement').click(function(e) {
+        e.preventDefault();
+        alert('سيتم توجيهك إلى صفحة إدارة الطلبات');
+    });
+});
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,627 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    
+    
+    .projects-management-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, rgba(78, 231, 134, 0.316) 0%, rgba(255, 255, 255, 0.9) 100%);
+        padding-top: 40px;
+        padding-bottom: 60px;
+    }
+    
+    .projects-title {
+        color: #2b6b42;
+        text-align: center;
+        margin: 20px 0 30px 0;
+        font-size: 36px;
+        font-weight: 700;
+        font-family: 'Cairo', sans-serif;
+    }
+    
+    .projects-stats {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .stat-item {
+        text-align: center;
+        flex: 1;
+        min-width: 200px;
+        padding: 15px;
+        border-radius: 10px;
+        background: rgba(43, 107, 66, 0.05);
+        transition: all 0.3s;
+    }
+    
+    .stat-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(43, 107, 66, 0.1);
+    }
+    
+    .stat-number {
+        font-size: 28px;
+        font-weight: 700;
+        color: #2b6b42;
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    .stat-label {
+        font-size: 14px;
+        color: #666;
+        font-weight: 600;
+    }
+    
+    .projects-count {
+        color: #2b6b42;
+        font-size: 18px;
+        font-weight: 600;
+        margin: 20px 0;
+        padding: 10px 20px;
+        background: rgba(43, 107, 66, 0.1);
+        border-radius: 10px;
+        display: inline-block;
+    }
+    
+    
+    .projects-table-container {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-bottom: 40px;
+        overflow-x: auto;
+    }
+    
+    .projects-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border: none;
+        font-family: 'Cairo', sans-serif;
+    }
+    
+    .projects-table th {
+        background-color: #2b6b42;
+        color: white;
+        padding: 18px 15px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 16px;
+        border: none;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .projects-table td {
+        border: 1px solid rgba(43, 107, 66, 0.2);
+        padding: 15px;
+        text-align: center;
+        color: #333;
+        vertical-align: middle;
+        font-size: 14px;
+    }
+    
+    .projects-table tr {
+        transition: all 0.3s;
+    }
+    
+    .projects-table tbody tr:hover {
+        background-color: rgba(43, 107, 66, 0.05);
+        transform: scale(1.01);
+    }
+    
+    
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    .status-pending {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+    }
+    
+    .status-in_progress {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+    }
+    
+    .status-completed {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .status-cancelled {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    
+    
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+    }
+    
+    .btn-edit, .btn-delete {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all 0.3s;
+        position: relative;
+        cursor: pointer;
+        border: none;
+    }
+    
+    .btn-edit {
+        background: rgba(43, 107, 66, 0.1);
+        color: #2b6b42;
+    }
+    
+    .btn-edit:hover {
+        background: #2b6b42;
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(43, 107, 66, 0.3);
+    }
+    
+    .btn-delete {
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+    
+    .btn-delete:hover {
+        background: #dc3545;
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+    }
+    
+   
+    .btn-edit::after, .btn-delete::after {
+        content: attr(title);
+        position: absolute;
+        top: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #333;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s;
+        z-index: 1000;
+        pointer-events: none;
+    }
+    
+    .btn-edit:hover::after, .btn-delete:hover::after {
+        opacity: 1;
+        visibility: visible;
+        top: -35px;
+    }
+    
+    
+
+    
+    .add-project-btn {
+        background-color: #2b6b42;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 16px 45px;
+        font-size: 18px;
+        font-weight: 600;
+        box-shadow: 0 6px 20px rgba(43, 107, 66, 0.3);
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-family: 'Cairo', sans-serif;
+    }
+    
+    .add-project-btn:hover {
+        background-color: #3a8a57;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(43, 107, 66, 0.4);
+        color: white;
+    }
+    
+    
+    .project-name-link {
+        color: #2b6b42;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+        padding: 5px 0;
+        display: inline-block;
+        position: relative;
+    }
+    
+    .project-name-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #2b6b42;
+        transition: width 0.3s;
+    }
+    
+    .project-name-link:hover {
+        color: #3a8a57;
+    }
+    
+    .project-name-link:hover::after {
+        width: 100%;
+    }
+    
+    
+    .load-more-container {
+        text-align: center;
+        margin-top: 30px;
+    }
+    
+    .btn-load-more {
+        background: transparent;
+        border: 2px solid #2b6b42;
+        color: #2b6b42;
+        padding: 10px 30px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    
+    .btn-load-more:hover {
+        background: #2b6b42;
+        color: white;
+    }
+    
+    
+    .no-projects {
+        text-align: center;
+        padding: 50px 20px;
+        color: #666;
+        font-size: 18px;
+    }
+    
+    .no-projects i {
+        font-size: 48px;
+        color: #ddd;
+        margin-bottom: 20px;
+        display: block;
+    }
+    
+    @media (max-width: 768px) {
+        .projects-table-container {
+            padding: 15px;
+        }
+        
+        .projects-table {
+            font-size: 12px;
+        }
+        
+        .projects-table th, 
+        .projects-table td {
+            padding: 10px 5px;
+        }
+        
+        .action-buttons {
+            gap: 5px;
+        }
+        
+        .btn-edit, .btn-delete {
+            width: 35px;
+            height: 35px;
+        }
+        
+        .stat-item {
+            min-width: 150px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .stat-item {
+            min-width: 100%;
+        }
+        
+        .add-project-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    
+.back-btn {
+    background-color: transparent;
+    color: #2b6b42;
+    border: 2px solid #2b6b42;
+    border-radius: 50px;
+    padding: 10px 30px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.back-btn:hover {
+    background-color: #2b6b42;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(43, 107, 66, 0.3);
+}
+
+    
+    .cancelled-row {
+        background-color: rgba(220, 53, 69, 0.1) !important;
+        opacity: 0.8;
+        border-left: 4px solid #dc3545 !important;
+    }
+    
+    .cancelled-row:hover {
+        background-color: rgba(220, 53, 69, 0.15) !important;
+        opacity: 0.9;
+    }
+    
+    
+    .cancelled-project-name {
+        color: #dc3545 !important;
+        text-decoration: line-through;
+    }
+    
+    
+    .btn-edit.disabled, .btn-delete.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+    
+    
+    .status-cancelled {
+        background-color: #f8d7da !important;
+        color: #be2a2a !important;
+        border: 1px solid #f5c6cb !important;
+    }
+    
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="projects-management-page">
+    <div class="container">
+        
+        <a href="{% url 'accounts:profile' %}" class="back-btn">
+            <i class="fas fa-arrow-right"></i> العودة إلى الملف الشخصي
+        </a>
+
+       
+        <h1 class="projects-title">Projects</h1>
+        
+       
+        <div class="projects-stats">
+            <div class="stat-item">
+                <span class="stat-number">{{ projects_count }}</span>
+                <span class="stat-label">جميع المشاريع</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ pending_count }}</span>
+                <span class="stat-label">قيد الانتظار</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ in_progress_count }}</span>
+                <span class="stat-label">قيد التنفيذ</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ completed_count }}</span>
+                <span class="stat-label">مكتملة</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ cancelled_count }}</span><span class="stat-label">ملغاة</span>
+            </div>
+        </div>
+       
+<div class="projects-stats" style="margin-top: 30px;">
+    <a href="{% url 'projects:project_by_type' 'comprehensive' %}" class="stat-item" style="text-decoration: none; color: inherit;">
+        <span class="stat-number">{{ comprehensive_count }}</span>
+        <span class="stat-label">مشاريع إعادة الإعمار الشاملة</span>
+    </a>
+    
+    <a href="{% url 'projects:project_by_type' 'community' %}" class="stat-item" style="text-decoration: none; color: inherit;">
+        <span class="stat-number">{{ community_count }}</span>
+        <span class="stat-label">مشاريع الدعم المجتمعي</span>
+    </a>
+    
+    <a href="{% url 'projects:project_by_type' 'development' %}" class="stat-item" style="text-decoration: none; color: inherit;">
+        <span class="stat-number">{{ development_count }}</span>
+        <span class="stat-label">مشاريع التنمية الإنشائية الجديدة</span>
+    </a>
+</div>
+
+        
+        <div class="projects-table-container">
+            {% if projects %}
+            <table class="projects-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>اسم المشروع</th>
+                        <th>نوع المشروع</th>
+                        <th>تاريخ الإضافة</th>
+                        <th>حالة المشروع</th>
+                        <th>إدارة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in projects %}
+                    <tr class="{% if project.is_cancelled %}cancelled-row{% endif %}">
+                        <td>{{ project.id }}</td>
+                        <td>
+                            <a href="{% url 'projects:project_detail' project.pk %}" class="project-name-link {% if project.is_cancelled %}cancelled-project-name{% endif %}">
+                                {{ project.name }}
+                            </a>
+                        </td>
+                        <td>{{ project.get_project_type_display }}</td>
+                        <td>{{ project.created_at|date:"Y/m/d" }}</td>
+                        <td>
+                            <span class="status-badge status-{{ project.status }} {% if project.is_cancelled %}status-cancelled{% endif %}">
+                                {{ project.get_status_display }}    
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                
+                                 {% if not project.is_cancelled %}
+                                <a href="{% url 'projects:project_update' project.pk %}" 
+                                   class="btn-edit" 
+                                   title="تعديل">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                {% else %}
+                    <span class="btn-edit disabled" title="لا يمكن تعديل مشروع ملغى">
+                        <i class="fas fa-edit"></i>
+                    </span>
+                    {% endif %}
+                              
+                                  {% if not project.is_cancelled %}
+                                <button class="btn-delete" title="حذف"
+                                        onclick="showDeleteModal('{{ project.pk }}', '{{ project.name|escapejs }}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                {% else %}
+                    <span class="btn-delete disabled" title="المشروع ملغى بالفعل">
+                        <i class="fas fa-trash"></i>
+                    </span>
+                    {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            
+            {% else %}
+            <div class="no-projects">
+                <i class="fas fa-folder-open"></i>
+                <p>لا توجد مشاريع حالياً</p>
+                <p class="text-muted mt-2">ابدأ بإضافة مشروع جديد بالضغط على زر "إضافة مشروع"</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'projects:project_create' %}" class="add-project-btn">
+                <i class="fas fa-plus me-2"></i>إضافة مشروع
+            </a>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #dc3545; color: white;">
+                <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>تأكيد الحذف
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteMessage"></p>
+                <p class="text-muted mt-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    هذا الإجراء لا يمكن التراجع عنه. سيتم حذف المشروع وجميع بياناته بشكل دائم.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>إلغاء
+                </button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>نعم، احذف المشروع
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+
+function showDeleteModal(projectId, projectName) {
+    document.getElementById('deleteMessage').innerHTML = 
+        'هل أنت متأكد من رغبتك في حذف المشروع <strong>' + 
+        projectName + '</strong>؟';
+    
+    document.getElementById('deleteForm').action = 
+        '/projects/' + projectId + '/delete/';
+    
+    var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteModal.show();
+}
+
+
+$(document).ready(function() {
+   
+    $('.projects-table tbody tr').hover(
+        function() {
+            $(this).css('transform', 'scale(1.01)');
+        },
+        function() {
+            $(this).css('transform', 'scale(1)');
+        }
+    );
+    
+    
+    if ($('#projectsCount').length) {
+        var count = parseInt($('#projectsCount').text());
+        $('#projectsCount').prop('counter', 0).animate({
+            counter: count
+        }, {
+            duration: 1500,
+            easing: 'swing',
+            step: function(now) {
+                $(this).text(Math.ceil(now));
+            }
+        });
+    }
+});
+
+</script>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-page login-page">
+    <div class="auth-box">
+        <h2 class="auth-title">تسجيل الدخول</h2>
+        
+        
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+                {{ error }}
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            
+            
+            <div class="form-group">
+                <label for="id_username">اسم المستخدم</label>
+                {{ form.username|as_crispy_field }}
+            </div>
+            
+            
+            <div class="form-group">
+                <label for="id_password">كلمة المرور</label>
+                {{ form.password|as_crispy_field }}
+            </div>
+            
+            <button type="submit" class="auth-btn">تسجيل الدخول</button>
+        </form>
+        
+        <div class="auth-link">
+            <p>ليس لديك حساب؟ <a href="{% url 'accounts:register' %}">إنشاء حساب</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

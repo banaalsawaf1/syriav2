@@ -1,0 +1,183 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .projects-public-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, rgba(78, 231, 134, 0.316) 0%, rgba(255, 255, 255, 0.9) 100%);
+        padding-top: 100px;
+        padding-bottom: 60px;
+    }
+
+    .page-title {
+        color: #2b6b42;
+        text-align: center;
+        margin: 20px 0 30px 0;
+        font-size: 36px;
+        font-weight: 700;
+        font-family: 'Cairo', sans-serif;
+    }
+
+    .type-badge {
+        background-color: #2b6b42;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 18px;
+        margin-bottom: 20px;
+        display: inline-block;
+    }
+
+    .projects-count {
+        background: rgba(43, 107, 66, 0.1);
+        padding: 15px;
+        border-radius: 10px;
+        margin: 20px 0;
+        display: inline-block;
+        color: #2b6b42;
+        font-weight: 600;
+    }
+
+    
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        margin-top: 40px;
+    }
+
+    @media (max-width: 1200px) {
+        .projects-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .projects-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+   
+    .project-card-public {
+        position: relative;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(43, 107, 66, 0.3);
+        transition: all 0.3s;
+        text-decoration: none;
+        display: block;
+        height: 350px;
+    }
+
+    .project-card-public:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(43, 107, 66, 0.4);
+    }
+
+    .project-card-public img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+    }
+
+    .project-title-public {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(43, 107, 66, 0.9);
+        color: white;
+        text-align: center;
+        padding: 15px;
+        font-size: 20px;
+        font-weight: 600;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .no-projects {
+        text-align: center;
+        padding: 100px 20px;
+        color: #666;
+        font-size: 18px;
+        grid-column: 1 / -1; 
+    }
+
+    .no-projects i {
+        font-size: 48px;
+        color: #ddd;
+        margin-bottom: 20px;
+        display: block;
+    }
+        
+    .btn {
+    background-color: transparent;
+    color: #2b6b42;
+    border: 2px solid #2b6b42;
+    border-radius: 50px;
+    padding: 10px 30px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    }
+
+    .btn:hover {
+    background-color: #2b6b42;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(43, 107, 66, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="projects-public-page">
+    <div class="container">
+       
+        <a href="{% url 'home:index' %}" class="btn mb-4">
+            <i class="fas fa-arrow-right"></i> العودة للصفحة الرئيسية
+        </a>
+
+       
+        <h1 class="page-title">مشاريع {{ project_type_name }}</h1>
+
+        <div class="type-badge">
+            <i class="fas fa-filter"></i> نوع المشروع: {{ project_type_name }}
+        </div>
+
+        
+        <div class="projects-count">
+            <i class="fas fa-chart-bar me-2"></i>
+            عدد المشاريع: <strong>{{ projects_count }}</strong>
+        </div>
+
+        
+        <div class="projects-grid">
+            {% for project in projects %}
+            <a href="{% url 'projects:project_detail' project.pk %}" class="project-card-public">
+                {% if project.image1 %}
+                    <img src="{{ project.image1.url }}" alt="{{ project.name }}">
+                {% else %}
+                    <img src="{% static 'images/default_project.jpg' %}" alt="صورة افتراضية">
+                {% endif %}
+                <div class="project-title-public">{{ project.name }}</div>
+            </a>
+            {% empty %}
+            <div class="no-projects">
+                <i class="fas fa-folder-open"></i>
+                <p>لا توجد مشاريع من نوع {{ project_type_name }} حالياً</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

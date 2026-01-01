@@ -1,0 +1,96 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="background-container">
+    
+    
+    <div class="content-wrapper">
+        <div class="text-section">
+            <p class="main-text">
+                تُعَدّ إعادة إعمار سوريا بعد سنوات الحرب من أكبر التحديات التي تواجه المجتمع السوري، نظرًا لحجم الدمار الواسع الذي طال البنية التحتية والمناطق السكنية والخدمية. وانطلاقًا من الحاجة إلى توثيق الجرائم التي ارتُكبت بحق وطننا الحبيب، والسعي الجاد لإعماره والنهوض به من رماد الحرب إلى فجرٍ جديد، نحو نسخةٍ أجمل من سوريا نعيد فيها بناء الحلم وغد أفضل؛ يأتي هذا المشروع ليقدّم نظامًا متكاملًا لتخطيط وإدارة عملية إعادة الإعمار تحت اسم Syria V2.0.
+            </p>
+            
+            <p class="secondary-text">
+                إن الطريق طويل والتحديات جسيمة، لكن إرادة الحياة أقوى. ندعوكم للانضمام إلينا في هذا المسار التاريخي سواء بالدعم أو بالخبرة أو بالحلول المبتكرة. معًا، نخطو خطوة تلو الأخرى نحو سوريا جديدة، يُعاد بناؤها ليس فقط بالأسمنت والحديد، بل بالإرادة والأمل والتعاون.
+            </p>
+        </div>
+        
+        <div class="buttons-section">
+            <button class="btn action-btn" id="viewProjectsBtn">
+                عرض المشاريع
+            </button>
+            
+            <button class="btn action-btn" id="viewPrioritiesBtn">
+                عرض أولويات تنفيذ المشاريع
+            </button>
+             <button class="btn action-btn" id="viewImplementationBtn">
+        المشاريع قيد التنفيذ
+    </button>
+        </div>
+        
+        
+        <div class="projects-section" id="projectsSection">
+            <div class="projects-grid">
+                <a href="{% url 'projects:projects_by_type_public' 'comprehensive' %}" class="project-card">
+                    <img src="{% static 'images/Comprehensive_reconstruction.jpg' %}" alt="Comprehensive Reconstruction">
+                    <div class="project-title">إعادة الإعمار الشاملة</div>
+                </a>
+                
+                <a href="{% url 'projects:projects_by_type_public' 'community' %}" class="project-card">
+                    <img src="{% static 'images/Community_support.jpg' %}" alt="Community Support">
+                    <div class="project-title">الدعم المجتمعي</div>
+                </a>
+                
+                <a href="{% url 'projects:projects_by_type_public' 'development' %}" class="project-card">
+                    <img src="{% static 'images/New_construction_development.jpg' %}" alt="New Construction Development">
+                    <div class="project-title">التنمية الإنشائية الجديدة</div>
+                </a>
+            </div>
+        </div>
+        
+        
+        <div class="priorities-section" id="prioritiesSection">
+            <p class="priorities-info">
+                تم ترتيب هذه الأولويات من خلال نسبة تصويت المواطنين على درجة الأولوية لكل مواطن مع أسباب مقنعة وضرورية
+            </p>
+            
+            <table class="priorities-table">
+                <thead>
+                    <tr>
+                        <th>المشاريع الضرورية</th>
+                        <th>نسبة التصويت</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+            <tr>
+                <td colspan="2" class="text-center">لا توجد مشاريع مرتبة حالياً</td>
+            </tr>
+                </tbody>
+            </table>
+        </div>
+    
+<div class="implementation-section" id="implementationSection">
+    <p class="implementation-info">
+       هنا المشاريع التي يتم تنفيذها حالياً
+    </p>
+    
+    <table class="implementation-table">
+        <thead>
+            <tr>
+                <th>اسم المشروع</th>
+                <th>نوع المشروع</th>
+            </tr>
+        </thead>
+        <tbody id="implementationTableBody">
+           
+            <tr>
+                <td colspan="2" class="text-center">لا توجد مشاريع قيد التنفيذ حالياً</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+{% endblock %}
